@@ -47,9 +47,22 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// CORS
+// CORS — accept the CLIENT_URL env var, or fall back to both common dev ports
+const ALLOWED_ORIGINS = process.env.CLIENT_URL
+  ? [process.env.CLIENT_URL]
+  : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    // In development, allow any localhost/127.0.0.1 origin
+    if (process.env.NODE_ENV === 'development' && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+      return callback(null, true);
+    }
+    if (ALLOWED_ORIGINS.includes(origin) || ALLOWED_ORIGINS.includes(origin.replace(/\/$/, ''))) return callback(null, true);
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
