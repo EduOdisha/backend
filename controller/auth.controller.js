@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import { sendEmail } from '../utils/email.js';
 import crypto from 'crypto';
+import { verificationEmailTemplate, otpEmailTemplate, resetPasswordEmailTemplate } from '../utils/emailTemplates.js';
 
 // Helper to send token response
 const sendTokenResponse = (user, statusCode, res, message = 'Success') => {
@@ -47,7 +48,6 @@ export const register = async (req, res, next) => {
 
     const user = await User.create({ name, email, phone, password });
 
-    // Send verification email
     try {
       const verifyToken = user.getEmailVerifyToken();
       await user.save({ validateBeforeSave: false });
@@ -56,22 +56,7 @@ export const register = async (req, res, next) => {
       await sendEmail({
         email: user.email,
         subject: 'EduOdisha - Verify Your Email',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #1e3a5f, #0ea5e9); padding: 30px; text-align: center;">
-              <h1 style="color: white; margin: 0;">EduOdisha</h1>
-              <p style="color: #e0f2fe; margin: 5px 0;">Odisha's Smart Education Platform</p>
-            </div>
-            <div style="padding: 30px; background: #f8fafc;">
-              <h2>Welcome, ${user.name}!</h2>
-              <p>Thank you for registering. Please verify your email address by clicking the button below:</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${verifyUrl}" style="background: #0ea5e9; color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Verify Email</a>
-              </div>
-              <p style="color: #64748b; font-size: 14px;">This link expires in 24 hours.</p>
-            </div>
-          </div>
-        `,
+        html: verificationEmailTemplate(user.name, verifyUrl),
       });
     } catch (emailErr) {
       console.error('Email send error:', emailErr.message);
@@ -224,15 +209,7 @@ export const sendOTP = async (req, res, next) => {
     await sendEmail({
       email: user.email,
       subject: 'EduOdisha - Your OTP Code',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 30px;">
-          <h2 style="color: #1e3a5f;">Your OTP Code</h2>
-          <div style="background: #f0f9ff; border: 2px solid #0ea5e9; border-radius: 12px; padding: 24px; text-align: center; margin: 20px 0;">
-            <p style="font-size: 48px; font-weight: bold; color: #0ea5e9; letter-spacing: 8px; margin: 0;">${otp}</p>
-          </div>
-          <p style="color: #64748b;">This OTP is valid for <strong>10 minutes</strong>. Do not share it with anyone.</p>
-        </div>
-      `,
+      html: otpEmailTemplate(otp),
     });
 
     res.status(200).json({ success: true, message: 'OTP sent to your email' });
@@ -257,14 +234,7 @@ export const forgotPassword = async (req, res, next) => {
     await sendEmail({
       email: user.email,
       subject: 'EduOdisha - Password Reset',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px;">
-          <h2>Reset Your Password</h2>
-          <p>Click below to reset your password. This link expires in 30 minutes.</p>
-          <a href="${resetUrl}" style="background: #0ea5e9; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; display: inline-block; margin: 16px 0;">Reset Password</a>
-          <p style="color: #64748b; font-size: 12px;">If you did not request this, ignore this email.</p>
-        </div>
-      `,
+      html: resetPasswordEmailTemplate(resetUrl),
     });
 
     res.status(200).json({ success: true, message: 'Password reset email sent' });
@@ -316,22 +286,7 @@ export const resendVerifyEmail = async (req, res, next) => {
     await sendEmail({
       email: user.email,
       subject: 'EduOdisha - Verify Your Email',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #1e3a5f, #0ea5e9); padding: 30px; text-align: center;">
-            <h1 style="color: white; margin: 0;">EduOdisha</h1>
-            <p style="color: #e0f2fe; margin: 5px 0;">Odisha's Smart Education Platform</p>
-          </div>
-          <div style="padding: 30px; background: #f8fafc;">
-            <h2>Welcome, ${user.name}!</h2>
-            <p>Thank you for registering. Please verify your email address by clicking the button below:</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${verifyUrl}" style="background: #0ea5e9; color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Verify Email</a>
-            </div>
-            <p style="color: #64748b; font-size: 14px;">This link expires in 24 hours.</p>
-          </div>
-        </div>
-      `,
+      html: verificationEmailTemplate(user.name, verifyUrl),
     });
 
     res.status(200).json({ success: true, message: 'Verification email sent' });
