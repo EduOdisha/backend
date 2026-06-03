@@ -47,10 +47,15 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// CORS — accept the CLIENT_URL env var, or fall back to both common dev ports
+// CORS — accept the CLIENT_URL env var (supports comma-separated list), or fall back to defaults
 const ALLOWED_ORIGINS = process.env.CLIENT_URL
-  ? [process.env.CLIENT_URL]
-  : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'];
+  ? process.env.CLIENT_URL.split(',').map(url => url.trim())
+  : [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:5173',
+      'https://eduodisha.netlify.app'
+    ];
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -60,7 +65,14 @@ app.use(cors({
     if (process.env.NODE_ENV === 'development' && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
       return callback(null, true);
     }
-    if (ALLOWED_ORIGINS.includes(origin) || ALLOWED_ORIGINS.includes(origin.replace(/\/$/, ''))) return callback(null, true);
+    
+    // Normalize origin by removing trailing slash for lookup
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    const isAllowed = ALLOWED_ORIGINS.some(allowed => allowed.replace(/\/$/, '') === normalizedOrigin);
+    
+    if (isAllowed || normalizedOrigin === 'https://eduodisha.netlify.app') {
+      return callback(null, true);
+    }
     callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
