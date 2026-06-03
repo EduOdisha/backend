@@ -1,4 +1,5 @@
 import { Lead } from '../models/index.js';
+import College from '../models/College.js';
 
 // @desc    Create lead
 // @route   POST /api/leads
@@ -15,9 +16,25 @@ export const createLead = async (req, res, next) => {
 // @route   GET /api/leads
 export const getLeads = async (req, res, next) => {
   try {
-    const { status, page = 1, limit = 20 } = req.query;
+    const { status, search, page = 1, limit = 20 } = req.query;
     const q = {};
     if (status) q.status = status;
+
+    if (search) {
+      // Find matching colleges
+      const matchingColleges = await College.find({
+        name: { $regex: search, $options: 'i' }
+      }).select('_id');
+      const collegeIds = matchingColleges.map(c => c._id);
+
+      q.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { phone: { $regex: search, $options: 'i' } },
+        { college: { $in: collegeIds } }
+      ];
+    }
+
     const total = await Lead.countDocuments(q);
     const leads = await Lead.find(q)
       .populate('assignedTo', 'name')
@@ -25,7 +42,7 @@ export const getLeads = async (req, res, next) => {
       .sort('-createdAt')
       .skip((parseInt(page) - 1) * parseInt(limit))
       .limit(parseInt(limit));
-    res.json({ success: true, total, data: leads });
+    res.json({ success: true, total, data: leads, leads });
   } catch (e) {
     next(e);
   }

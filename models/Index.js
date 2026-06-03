@@ -241,7 +241,6 @@ const leadSchema = new mongoose.Schema({
   message: String,
   source: {
     type: String,
-    enum: ['Homepage', 'College Page', 'Course Page', 'Exam Page', 'Scholarship Page', 'Career Page', 'Other'],
     default: 'Homepage',
   },
   status: {

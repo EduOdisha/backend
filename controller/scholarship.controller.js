@@ -4,13 +4,17 @@ import { Scholarship } from '../models/index.js';
 // @route   GET /api/scholarships
 export const getScholarships = async (req, res, next) => {
   try {
-    const { category, type, level } = req.query;
-    const q = { isActive: true };
+    const { category, type, level, search, admin } = req.query;
+    const q = {};
+    if (admin !== 'true') {
+      q.isActive = true;
+    }
+    if (search) q.name = { $regex: search, $options: 'i' };
     if (category) q.category = category;
     if (type) q.type = type;
     if (level) q.level = level;
     const scholarships = await Scholarship.find(q)
-      .select('name slug provider category type amount lastDate image isFeatured')
+      .select('name slug provider category type amount lastDate image isFeatured isActive')
       .sort('-isFeatured lastDate').lean();
     res.json({ success: true, data: scholarships });
   } catch (e) {
@@ -22,7 +26,7 @@ export const getScholarships = async (req, res, next) => {
 // @route   GET /api/scholarships/:slug
 export const getScholarship = async (req, res, next) => {
   try {
-    const s = await Scholarship.findOne({ slug: req.params.slug, isActive: true });
+    const s = await Scholarship.findOne({ slug: req.params.slug });
     if (!s) return res.status(404).json({ success: false, message: 'Scholarship not found' });
     await Scholarship.findByIdAndUpdate(s._id, { $inc: { views: 1 } });
     res.json({ success: true, data: s });
@@ -37,6 +41,30 @@ export const createScholarship = async (req, res, next) => {
   try {
     const s = await Scholarship.create(req.body);
     res.status(201).json({ success: true, data: s });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// @desc    Update scholarship
+// @route   PUT /api/scholarships/:id
+export const updateScholarship = async (req, res, next) => {
+  try {
+    const s = await Scholarship.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!s) return res.status(404).json({ success: false, message: 'Scholarship not found' });
+    res.json({ success: true, data: s });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// @desc    Delete scholarship
+// @route   DELETE /api/scholarships/:id
+export const deleteScholarship = async (req, res, next) => {
+  try {
+    const s = await Scholarship.findByIdAndDelete(req.params.id);
+    if (!s) return res.status(404).json({ success: false, message: 'Scholarship not found' });
+    res.json({ success: true, message: 'Scholarship deleted successfully' });
   } catch (e) {
     next(e);
   }

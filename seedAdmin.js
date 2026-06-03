@@ -11,7 +11,7 @@ const seedAdmin = async () => {
     console.log('📦 Connected to MongoDB for seeding...');
 
     const adminEmail = 'admin@eduodisha.com';
-    const adminPassword = 'adminpassword123';
+    const adminPassword = 'admin123';
 
     // 2. Check if admin already exists
     let user = await User.findOne({ email: adminEmail });

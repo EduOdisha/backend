@@ -4,12 +4,16 @@ import { Exam } from '../models/index.js';
 // @route   GET /api/exams
 export const getExams = async (req, res, next) => {
   try {
-    const { type, level, featured } = req.query;
-    const q = { isActive: true };
-    if (type) q.type = type;
-    if (level) q.level = level;
+    const { search, type, level, featured, admin } = req.query;
+    const q = {};
+    if (admin !== 'true') {
+      q.isActive = true;
+    }
+    if (search) q.name = { $regex: search, $options: 'i' };
+    if (type) q.type = { $in: type.split(',') };
+    if (level) q.level = { $in: level.split(',') };
     if (featured === 'true') q.isFeatured = true;
-    const exams = await Exam.find(q).select('name slug shortName type level examDates image isFeatured').sort('-isFeatured').lean();
+    const exams = await Exam.find(q).select('name slug shortName type level examDates image isFeatured conductedBy isActive').sort('-isFeatured').lean();
     res.json({ success: true, data: exams });
   } catch (e) {
     next(e);

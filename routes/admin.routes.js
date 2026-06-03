@@ -4,6 +4,14 @@ import {
   getAllUsers,
   toggleUserActive,
 } from '../controller/admin.controller.js';
+import { getLeads, updateLead } from '../controller/lead.controller.js';
+import { getAdminReviews, deleteReview } from '../controller/review.controller.js';
+import {
+  getAdminPlatformReviews,
+  approvePlatformReview,
+  featurePlatformReview,
+  deletePlatformReview,
+} from '../controller/platformReview.controller.js';
 import { protect, authorize } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
@@ -14,6 +22,16 @@ router.use(protect, authorize('admin'));
 router.get('/analytics', getAnalytics);
 router.get('/users', getAllUsers);
 router.put('/users/:id/toggle-active', toggleUserActive);
+router.get('/leads', getLeads);
+router.patch('/leads/:id/status', updateLead);
+router.get('/reviews', getAdminReviews);
+router.delete('/reviews/:id', deleteReview);
+
+// Platform (EduOdisha itself) reviews
+router.get('/platform-reviews', getAdminPlatformReviews);
+router.put('/platform-reviews/:id/approve', approvePlatformReview);
+router.put('/platform-reviews/:id/feature', featurePlatformReview);
+router.delete('/platform-reviews/:id', deletePlatformReview);
 
 export default router;
 

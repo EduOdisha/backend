@@ -1,5 +1,6 @@
 import College from '../models/College.js';
-import { Review } from '../models/index.js';
+import { Review, Course, Exam, Scholarship } from '../models/index.js';
+
 
 // @desc    Get all colleges with filters
 // @route   GET /api/colleges
@@ -127,7 +128,7 @@ export const compareColleges = async (req, res, next) => {
     }
 
     const colleges = await College.find({ _id: { $in: ids }, isActive: true })
-      .select('name slug logo location type category naacGrade fees placements facilities rating courses');
+      .select('name slug logo banner location type category naacGrade fees placements facilities rating courses isFeatured isVerified nirfRanking');
 
     res.status(200).json({ success: true, data: colleges });
   } catch (error) {
@@ -140,7 +141,7 @@ export const compareColleges = async (req, res, next) => {
 export const getFeaturedColleges = async (req, res, next) => {
   try {
     const colleges = await College.find({ isFeatured: true, isActive: true })
-      .select('name slug logo location rating fees placements type category')
+      .select('name slug logo banner location rating fees placements type category isFeatured isVerified nirfRanking')
       .limit(10)
       .sort('-rating.average')
       .lean();
@@ -157,7 +158,7 @@ export const getCollegesByCity = async (req, res, next) => {
     const colleges = await College.find({
       'location.city': req.params.city,
       isActive: true,
-    }).select('name slug logo location rating fees type category').limit(8).lean();
+    }).select('name slug logo banner location rating fees type category isFeatured isVerified nirfRanking placements').limit(8).lean();
     res.status(200).json({ success: true, data: colleges });
   } catch (error) {
     next(error);
@@ -183,4 +184,28 @@ export const updateCollegeRating = async (collegeId) => {
     'rating.count': reviews.length,
     'rating.breakdown': breakdown,
   });
+};
+
+// @desc    Get public statistics for counts
+// @route   GET /api/colleges/public-stats
+export const getPublicStats = async (req, res, next) => {
+  try {
+    const [colleges, courses, exams, scholarships] = await Promise.all([
+      College.countDocuments({ isActive: true }),
+      Course.countDocuments({ isActive: true }),
+      Exam.countDocuments({ isActive: true }),
+      Scholarship.countDocuments({ isActive: true }),
+    ]);
+    res.status(200).json({
+      success: true,
+      data: {
+        colleges,
+        courses,
+        exams,
+        scholarships,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 };

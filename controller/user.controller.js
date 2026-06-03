@@ -6,8 +6,8 @@ export const getUserDashboard = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id)
       .populate('savedColleges', 'name slug logo location rating fees')
-      .populate('savedCourses', 'name slug level stream')
-      .populate('examReminders', 'name slug examDates');
+      .populate('savedCourses', 'name slug level stream image')
+      .populate('examReminders', 'name slug examDates image type conductedBy');
     res.json({ success: true, data: user });
   } catch (error) {
     next(error);
@@ -58,7 +58,7 @@ export const saveCourse = async (req, res, next) => {
       user.savedCourses.push(req.params.id);
     }
     await user.save();
-    res.json({ success: true, saved: idx === -1 });
+    res.json({ success: true, saved: idx === -1, savedCourses: user.savedCourses });
   } catch (error) {
     next(error);
   }
@@ -76,7 +76,7 @@ export const examReminder = async (req, res, next) => {
       user.examReminders.push(req.params.id);
     }
     await user.save();
-    res.json({ success: true, reminded: idx === -1 });
+    res.json({ success: true, reminded: idx === -1, examReminders: user.examReminders });
   } catch (error) {
     next(error);
   }

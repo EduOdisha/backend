@@ -4,13 +4,18 @@ import { Blog } from '../models/index.js';
 // @route   GET /api/blogs
 export const getBlogs = async (req, res, next) => {
   try {
-    const { category, page = 1, limit = 9, featured } = req.query;
-    const q = { isPublished: true };
+    const { category, page = 1, limit = 9, featured, admin, search } = req.query;
+    const q = {};
+    if (admin !== 'true') {
+      q.isPublished = true;
+    }
     if (category) q.category = category;
     if (featured === 'true') q.isFeatured = true;
+    if (search) q.title = { $regex: search, $options: 'i' };
+    
     const total = await Blog.countDocuments(q);
     const blogs = await Blog.find(q)
-      .select('title slug excerpt category image author createdAt views isFeatured')
+      .select('title slug excerpt category image author createdAt views isFeatured isPublished')
       .populate('author', 'name avatar')
       .sort('-isFeatured -createdAt')
       .skip((parseInt(page) - 1) * parseInt(limit))
