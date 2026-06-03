@@ -90,6 +90,18 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Base root route
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'EduOdisha Backend API is running successfully!',
+    endpoints: {
+      health: '/health',
+      api: '/api'
+    }
+  });
+});
+
 // Base API Route
 app.get('/api', (req, res) => {
   res.status(200).json({
