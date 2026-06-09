@@ -80,7 +80,7 @@ const COLLEGES = [
     name: 'Ravenshaw University',
     shortName: 'RU',
     type: 'Government',
-    category: 'Arts & Science',
+    category: 'Other',
     location: { city: 'Cuttack', district: 'Cuttack', state: 'Odisha', address: 'College Square, Cuttack' },
     established: 1868,
     affiliation: 'State University',
@@ -160,7 +160,7 @@ const COLLEGES = [
     name: 'Utkal University',
     shortName: 'UU',
     type: 'Government',
-    category: 'Arts & Science',
+    category: 'Other',
     location: { city: 'Bhubaneswar', district: 'Khordha', state: 'Odisha', address: 'Vani Vihar, Bhubaneswar' },
     established: 1943,
     affiliation: 'State University',
@@ -185,7 +185,7 @@ const EXAMS = [
     shortName: 'OJEE',
     type: 'State',
     conductedBy: 'Odisha Joint Entrance Examination Board',
-    level: 'UG',
+    level: 'Undergraduate (UG)',
     description: 'OJEE (Odisha Joint Entrance Examination) is a state-level entrance test conducted for admission to Lateral Entry B.Tech, MBA, MCA, M.Tech, and M.Pharm programs in Odisha.',
     eligibility: { qualification: '12th passed with PCM', percentage: '45% marks', domicile: 'Odisha domicile preferred' },
     applicationFee: { general: 1000, sc_st: 700 },
@@ -233,7 +233,7 @@ const EXAMS = [
     shortName: 'CAT',
     type: 'National',
     conductedBy: 'IIMs (rotating)',
-    level: 'UG',
+    level: 'Postgraduate (PG)',
     description: 'Common Admission Test is a national-level MBA entrance exam for admission to IIMs and other top management institutions.',
     eligibility: { qualification: 'Bachelor\'s degree', percentage: '50% for general (45% for reserved)' },
     applicationFee: { general: 2400, sc_st: 1200 },
@@ -245,7 +245,7 @@ const EXAMS = [
     shortName: 'OAS',
     type: 'State',
     conductedBy: 'Odisha Public Service Commission (OPSC)',
-    level: 'UG',
+    level: 'Undergraduate (UG)',
     description: 'Odisha Administrative Service exam for Group-A and Group-B posts in the Odisha government. Considered one of the most prestigious state exams.',
     eligibility: { qualification: 'Bachelor\'s degree', age: '21–38 years', domicile: 'Odisha domicile required' },
     applicationFee: { general: 500, sc_st: 250 },
@@ -261,7 +261,7 @@ const SCHOLARSHIPS = [
     provider: 'Government of Odisha — Social Welfare Department',
     type: 'Government',
     category: 'OBC',
-    level: ['10th'],
+    level: ['Any'],
     amount: { value: 10000, type: 'Annual' },
     description: 'Financial assistance to OBC students studying in Class 1 to 10 in recognized institutions in Odisha.',
     eligibility: { income: 'Annual family income below ₹2.5 lakh', category: ['OBC'], state: 'Odisha' },
@@ -273,7 +273,7 @@ const SCHOLARSHIPS = [
     provider: 'Government of Odisha — SC & ST Development Department',
     type: 'Government',
     category: 'SC/ST',
-    level: ['12th', 'UG', 'PG'],
+    level: ['12th', 'Undergraduate (UG)', 'Postgraduate (PG)'],
     amount: { value: 25000, type: 'Annual' },
     description: 'Scholarship for SC/ST students pursuing post-matriculation education in recognized institutions across India.',
     eligibility: { income: 'Annual family income below ₹2.5 lakh', category: ['SC', 'ST'], state: 'Odisha' },
@@ -285,7 +285,7 @@ const SCHOLARSHIPS = [
     provider: 'Odisha Public Service Commission',
     type: 'Government',
     category: 'Merit',
-    level: ['UG', 'PG'],
+    level: ['Undergraduate (UG)', 'Postgraduate (PG)'],
     amount: { value: 15000, type: 'Annual' },
     description: 'Merit-based scholarship for students who have secured high marks in board exams and are pursuing UG/PG courses in Odisha.',
     eligibility: { percentage: '85% in 12th board', state: 'Odisha' },
@@ -297,7 +297,7 @@ const SCHOLARSHIPS = [
     provider: 'KIIT University',
     type: 'University',
     category: 'Merit',
-    level: ['UG'],
+    level: ['Undergraduate (UG)'],
     amount: { value: 50000, type: 'Annual' },
     description: 'Full and partial tuition fee waivers for students securing top ranks in JEE Main, KIITEE, and board examinations.',
     eligibility: { percentage: '90%+ in 12th or top JEE rank' },
@@ -309,7 +309,7 @@ const SCHOLARSHIPS = [
     provider: 'Government of Odisha — Higher Education Dept.',
     type: 'Government',
     category: 'Girls',
-    level: ['UG'],
+    level: ['Undergraduate (UG)'],
     amount: { value: 30000, type: 'Annual' },
     description: 'Scholarship for girl students pursuing B.Tech/B.E. in engineering colleges in Odisha to encourage female participation in STEM.',
     eligibility: { category: ['Girls'], state: 'Odisha', course: ['B.Tech', 'B.E.'] },
@@ -324,11 +324,11 @@ const COURSES = [
     name: 'Bachelor of Technology (B.Tech)',
     shortName: 'B.Tech',
     level: 'UG',
-    stream: 'Technology',
+    stream: 'Engineering',
     duration: '4 Years',
     description: 'B.Tech is a 4-year undergraduate engineering program covering core engineering disciplines with practical training.',
     eligibility: '12th with PCM (Physics, Chemistry, Maths)',
-    entranceExams: ['JEE Main', 'JEE Advanced', 'OJEE', 'CUET'],
+    entranceExams: ['JEE Main', 'OJEE', 'CUET'],
     fees: { min: 35000, max: 320000 },
     careerScope: 'Software Development, Core Engineering, Research, Civil Services',
     jobRoles: ['Software Engineer', 'Data Scientist', 'Mechanical Engineer', 'Civil Engineer'],
@@ -352,7 +352,7 @@ const COURSES = [
     name: 'Master of Business Administration (MBA)',
     shortName: 'MBA',
     level: 'PG',
-    stream: 'Commerce',
+    stream: 'Management',
     duration: '2 Years',
     description: 'MBA is a 2-year postgraduate management program focusing on business administration, finance, marketing, and leadership.',
     eligibility: "Bachelor's degree in any discipline",
@@ -366,7 +366,7 @@ const COURSES = [
     name: 'Bachelor of Computer Applications (BCA)',
     shortName: 'BCA',
     level: 'UG',
-    stream: 'Technology',
+    stream: 'Engineering',
     duration: '3 Years',
     description: 'BCA is a 3-year undergraduate program covering computer science fundamentals, programming, and software development.',
     eligibility: '12th from any stream (PCM preferred)',
@@ -380,7 +380,7 @@ const COURSES = [
     name: 'Bachelor of Laws (LLB)',
     shortName: 'LLB',
     level: 'UG',
-    stream: 'Arts',
+    stream: 'Other',
     duration: '3 Years',
     description: '3-year law program for graduates (or 5 years integrated BA LLB for 12th students). Covers constitutional, civil, criminal, and corporate law.',
     eligibility: "Bachelor's degree (3-yr LLB) or 12th (5-yr BA LLB)",
@@ -420,17 +420,17 @@ const seed = async () => {
 
     // ── Admin User ──
     console.log('👤 Seeding admin user...');
-    const existing = await User.findOne({ email: 'admin@eduodisha.com' });
+    const existing = await User.findOne({ email: 'eduodisha121@gmail.com' });
     if (!existing) {
       await User.create({
         name: 'Super Admin',
-        email: 'admin@eduodisha.com',
+        email: 'eduodisha121@gmail.com',
         password: 'admin123',
         role: 'admin',
         isEmailVerified: true,
         isActive: true,
       });
-      console.log('   ✅ Admin created: admin@eduodisha.com / admin123');
+      console.log('   ✅ Admin created: eduodisha121@gmail.com / admin123');
     } else {
       console.log('   ℹ️  Admin already exists — skipping');
     }
@@ -456,7 +456,9 @@ const seed = async () => {
         await College.create({ ...c, slug });
         console.log(`   ✅ ${c.name}`);
       } else {
-        console.log(`   ℹ️  ${c.name} — already exists`);
+        const slug = slugify(c.name, { lower: true, strict: true });
+        await College.updateOne({ name: c.name }, { ...c, slug });
+        console.log(`   🔄 Updated ${c.name}`);
       }
     }
 
@@ -469,12 +471,15 @@ const seed = async () => {
         await Exam.create({ ...e, slug });
         console.log(`   ✅ ${e.name}`);
       } else {
-        console.log(`   ℹ️  ${e.name} — already exists`);
+        const slug = slugify(e.name, { lower: true, strict: true });
+        await Exam.updateOne({ name: e.name }, { ...e, slug });
+        console.log(`   🔄 Updated ${e.name}`);
       }
     }
 
     // ── Scholarships ──
     console.log('\n🎓 Seeding scholarships...');
+    await Scholarship.deleteMany({});
     for (const s of SCHOLARSHIPS) {
       const exists = await Scholarship.findOne({ name: s.name });
       if (!exists) {
@@ -495,7 +500,9 @@ const seed = async () => {
         await Course.create({ ...c, slug });
         console.log(`   ✅ ${c.name}`);
       } else {
-        console.log(`   ℹ️  ${c.name} — already exists`);
+        const slug = slugify(c.name, { lower: true, strict: true });
+        await Course.updateOne({ name: c.name }, { ...c, slug });
+        console.log(`   🔄 Updated ${c.name}`);
       }
     }
 
@@ -513,7 +520,7 @@ const seed = async () => {
 
     console.log('\n✨ Database seeded successfully!\n');
     console.log('─────────────────────────────────────────');
-    console.log('  Admin Login: admin@eduodisha.com');
+    console.log('  Admin Login: eduodisha121@gmail.com');
     console.log('  Password:    admin123');
     console.log('─────────────────────────────────────────');
     process.exit(0);

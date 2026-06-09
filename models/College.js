@@ -18,7 +18,7 @@ const collegeSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Engineering', 'Medical', 'Management', 'Arts & Science', 'Law', 'Pharmacy', 'Nursing', 'Polytechnic', 'Other'],
+    enum: ['Engineering', 'Medical', 'Management', 'Nursing', 'Polytechnic', 'Other'],
     required: true,
   },
   logo: {

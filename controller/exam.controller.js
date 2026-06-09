@@ -1,20 +1,80 @@
-import { Exam } from '../models/index.js';
+import { Exam, Course } from '../models/index.js';
 
 // @desc    Get all exams
 // @route   GET /api/exams
 export const getExams = async (req, res, next) => {
   try {
-    const { search, type, level, featured, admin } = req.query;
+    const { search, type, level, course, featured, admin, page = 1, limit } = req.query;
     const q = {};
     if (admin !== 'true') {
       q.isActive = true;
     }
     if (search) q.name = { $regex: search, $options: 'i' };
     if (type) q.type = { $in: type.split(',') };
-    if (level) q.level = { $in: level.split(',') };
+
+    // Handle levels and course subcategories
+    const orConditions = [];
+    if (level) {
+      orConditions.push({ level: { $in: level.split(',') } });
+    }
+    if (course) {
+      const courseList = course.split(',');
+      // Find courses with these shortNames
+      const courses = await Course.find({ shortName: { $in: courseList } }).select('entranceExams');
+      const examNames = courses.flatMap(c => c.entranceExams || []);
+      
+      // Match any exam whose name or shortName is in the course entranceExams list
+      orConditions.push({
+        $or: [
+          { name: { $in: examNames } },
+          { shortName: { $in: examNames } }
+        ]
+      });
+
+      // Automatically map courses to their parent levels for better matches
+      const parents = [];
+      const ugCourses = ['B.Tech', 'BCA', 'BBA', 'B.Sc'];
+      const pgCourses = ['MBA', 'MCA', 'M.Tech'];
+      
+      if (courseList.some(c => ugCourses.includes(c))) {
+        parents.push('Undergraduate (UG)');
+      }
+      if (courseList.some(c => pgCourses.includes(c))) {
+        parents.push('Postgraduate (PG)');
+      }
+      if (parents.length > 0) {
+        parents.push('Any');
+        orConditions.push({ level: { $in: parents } });
+      }
+    }
+
+    if (orConditions.length > 0) {
+      q.$or = orConditions;
+    }
+
     if (featured === 'true') q.isFeatured = true;
-    const exams = await Exam.find(q).select('name slug shortName type level examDates image isFeatured conductedBy isActive').sort('-isFeatured').lean();
-    res.json({ success: true, data: exams });
+
+    // Handle pagination limits
+    let finalLimit = parseInt(limit);
+    if (!finalLimit) {
+      finalLimit = admin === 'true' ? 100 : 6;
+    }
+
+    const total = await Exam.countDocuments(q);
+    const exams = await Exam.find(q)
+      .select('name slug shortName type level examDates image isFeatured conductedBy isActive')
+      .sort('-isFeatured')
+      .skip((parseInt(page) - 1) * finalLimit)
+      .limit(finalLimit)
+      .lean();
+
+    res.json({
+      success: true,
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / finalLimit),
+      data: exams
+    });
   } catch (e) {
     next(e);
   }

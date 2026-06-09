@@ -4,11 +4,24 @@ import { Course } from '../models/index.js';
 // @route   GET /api/courses
 export const getCourses = async (req, res, next) => {
   try {
-    const { level, stream, search, featured, limit = 100, page = 1 } = req.query;
+    const { level, stream, shortName, search, featured, limit = 100, page = 1 } = req.query;
     const query = { isActive: true };
 
-    if (level)    query.level  = level;
-    if (stream)   query.stream = stream;
+    // Support comma-separated streams
+    if (stream) query.stream = { $in: stream.split(',') };
+
+    // Support subcategory filters by shortName
+    if (shortName) query.shortName = { $in: shortName.split(',') };
+
+    // Support levels (with mapping of Undergraduate/Postgraduate to UG/PG)
+    if (level) {
+      const levelList = level.split(',').map(l => {
+        if (l === 'Undergraduate' || l === 'Undergraduate (UG)' || l === 'UG') return 'UG';
+        if (l === 'Postgraduate' || l === 'Postgraduate (PG)' || l === 'PG') return 'PG';
+        return l;
+      });
+      query.level = { $in: levelList };
+    }
     if (featured === 'true') query.isFeatured = true;
     if (search)   query.$or = [
       { name:        { $regex: search, $options: 'i' } },

@@ -11,7 +11,7 @@ const examSchema = new mongoose.Schema({
     required: true,
   },
   conductedBy: String,
-  level: { type: String, enum: ['10th', '12th', 'UG', 'PG', 'Diploma', 'Any'] },
+  level: { type: String, enum: ['10th', '12th', 'Undergraduate (UG)', 'Postgraduate (PG)', 'Diploma', 'Any'] },
   description: String,
   overview: String,
   eligibility: {

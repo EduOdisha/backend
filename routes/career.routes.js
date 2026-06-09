@@ -31,14 +31,14 @@ const careerData = {
       title: 'Engineering after 12th',
       paths: ['B.Tech/BE', 'B.Sc Engineering', 'Integrated M.Tech'],
       courses: ['B.Tech', 'B.Arch', 'B.Plan'],
-      exams: ['JEE Main', 'JEE Advanced', 'OJEE', 'CUET'],
+      exams: ['JEE Main', 'OJEE', 'CUET'],
       salary: 'Entry: ₹3.5-6 LPA | Mid: ₹8-18 LPA | Senior: ₹20+ LPA',
     },
     medical: {
       title: 'Medical after 12th',
       paths: ['MBBS', 'BDS', 'BAMS', 'Nursing', 'Pharmacy', 'Physiotherapy'],
       courses: ['MBBS', 'BDS', 'B.Sc Nursing', 'B.Pharm'],
-      exams: ['NEET-UG', 'AIIMS', 'JIPMER'],
+      exams: ['NEET-UG', 'AIIMS BSc'],
       salary: 'Entry: ₹4-8 LPA | Mid: ₹10-25 LPA | Senior: ₹30+ LPA',
     },
     management: {

@@ -4,15 +4,45 @@ import { Scholarship } from '../models/index.js';
 // @route   GET /api/scholarships
 export const getScholarships = async (req, res, next) => {
   try {
-    const { category, type, level, search, admin } = req.query;
+    const { category, type, level, course, search, admin } = req.query;
     const q = {};
     if (admin !== 'true') {
       q.isActive = true;
     }
     if (search) q.name = { $regex: search, $options: 'i' };
-    if (category) q.category = category;
-    if (type) q.type = type;
-    if (level) q.level = level;
+    if (category) q.category = { $in: category.split(',') };
+    if (type) q.type = { $in: type.split(',') };
+
+    // Handle levels and course subcategories
+    const orConditions = [];
+    if (level) {
+      orConditions.push({ level: { $in: level.split(',') } });
+    }
+    if (course) {
+      const courseList = course.split(',');
+      orConditions.push({ 'eligibility.course': { $in: courseList } });
+
+      // Automatically map courses to their parent levels for better matches
+      const parents = [];
+      const ugCourses = ['B.Tech', 'BCA', 'BBA', 'B.Sc'];
+      const pgCourses = ['MBA', 'MCA', 'M.Tech'];
+      
+      if (courseList.some(c => ugCourses.includes(c))) {
+        parents.push('Undergraduate (UG)');
+      }
+      if (courseList.some(c => pgCourses.includes(c))) {
+        parents.push('Postgraduate (PG)');
+      }
+      if (parents.length > 0) {
+        parents.push('Any');
+        orConditions.push({ level: { $in: parents } });
+      }
+    }
+
+    if (orConditions.length > 0) {
+      q.$or = orConditions;
+    }
+
     const scholarships = await Scholarship.find(q)
       .select('name slug provider category type amount lastDate image isFeatured isActive')
       .sort('-isFeatured lastDate').lean();

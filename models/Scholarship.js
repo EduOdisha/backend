@@ -7,15 +7,15 @@ const scholarshipSchema = new mongoose.Schema({
   provider: { type: String, required: true },
   type: {
     type: String,
-    enum: ['Government', 'Private', 'NGO', 'University', 'International'],
+    enum: ['Government', 'Private', 'NGO', 'University'],
     required: true,
   },
   category: {
     type: String,
-    enum: ['Merit', 'SC/ST', 'OBC', 'Minority', 'Disability', 'Girls', 'Post Matric', 'Pre Matric', 'Other'],
+    enum: ['Merit', 'SC/ST', 'OBC', 'Girls', 'Post Matric', 'Pre Matric', 'Other'],
     required: true,
   },
-  level: [{ type: String, enum: ['10th', '12th', 'UG', 'PG', 'Diploma', 'PhD', 'Any'] }],
+  level: [{ type: String, enum: ['12th', 'Undergraduate (UG)', 'Postgraduate (PG)', 'Diploma', 'Any'] }],
   amount: { value: Number, type: { type: String, enum: ['Full', 'Partial', 'Monthly', 'Annual'] } },
   description: String,
   eligibility: {

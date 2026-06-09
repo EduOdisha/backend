@@ -6,7 +6,7 @@ const courseSchema = new mongoose.Schema({
   slug: { type: String, unique: true },
   shortName: String,
   level: { type: String, enum: ['10th', '12th', 'UG', 'PG', 'Diploma', 'Certificate', 'Other'], required: true },
-  stream: { type: String, enum: ['Science', 'Commerce', 'Arts', 'Technology', 'Medical', 'Law', 'Design', 'Vocational', 'Other'] },
+  stream: { type: String, enum: ['Engineering', 'Medical', 'Management', 'Nursing', 'Other'] },
   duration: String,
   description: String,
   overview: String,
