@@ -54,7 +54,8 @@ const ALLOWED_ORIGINS = process.env.CLIENT_URL
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:5173',
-    'https://eduodisha.netlify.app'
+    "https://eduodisha.in",
+    "https://www.eduodisha.in"
   ];
 
 app.use(cors({
@@ -70,7 +71,7 @@ app.use(cors({
     const normalizedOrigin = origin.replace(/\/$/, '');
     const isAllowed = ALLOWED_ORIGINS.some(allowed => allowed.replace(/\/$/, '') === normalizedOrigin);
 
-    if (isAllowed || normalizedOrigin === 'https://eduodisha.netlify.app') {
+    if (isAllowed || normalizedOrigin === "https://eduodisha.in") {
       return callback(null, true);
     }
     callback(new Error(`CORS: origin ${origin} not allowed`));
